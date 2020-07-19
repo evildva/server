@@ -1,0 +1,46 @@
+#include <iostream>
+#include <pthread.h>
+#include <string>
+#include <unistd.h>
+
+using namespace std;
+
+struct ms{
+	bool& b;
+	pthread_t *t;
+};
+
+void *do1(void* arg){
+	bool *b=(bool*)arg;
+	while(*b)
+		{
+			sleep(1);
+		};
+}
+
+void *do2(void *arg){
+	while(1){
+		string cmd;
+		cin>>cmd;
+		struct ms *m=(struct ms*)arg;
+		if(cmd=="quit") 
+			{
+				//pthread_cancel(t2);
+				m->b=false;
+				exit(0);
+			}
+		}
+}
+
+int main(int argc, char const *argv[])
+{
+	pthread_t *t1,*t2;
+	void** r1,**r2;
+	bool b=true;
+	struct ms m={b,t1};
+	pthread_create(t1,NULL,do1,&b);
+	pthread_create(t2,NULL,do2,&m);
+	pthread_join(*t1,r1);
+	pthread_join(*t2,r2);
+	return 0;
+}

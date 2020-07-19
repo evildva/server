@@ -1,0 +1,49 @@
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+using namespace std;
+
+void* print(void* s)
+{
+
+	string str="abcd";
+
+	for(int i=0;i<10;i++)
+	{
+		cout<<str<<" ";
+		sleep(1);
+	}
+
+	cout<<"th: "<<strerror(errno)<<endl;
+}
+
+int main(){
+
+	pthread_t t1,t2;
+	
+
+	if(pthread_create(&t1,NULL,&print,NULL)!=0)
+	{
+		perror("t1 error");
+	}
+	if(pthread_create(&t2,NULL,&print,NULL)!=0)
+	{
+		perror("t2 error");
+	}
+
+	void* ret;
+
+	cout<<"main: "<<strerror(errno)<<endl;
+
+	pthread_join(t1,&ret);
+	pthread_join(t2,&ret);
+
+	return 0;
+}
